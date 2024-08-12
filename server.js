@@ -5,7 +5,7 @@ const cors = require('cors');
 const path = require('path');
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
@@ -13,7 +13,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 let processos = [];
 
-app.get('/scrape', async (req, res) => {
+app.get('/api/scrape', async (req, res) => {
   try {
     const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
@@ -55,7 +55,7 @@ app.get('/scrape', async (req, res) => {
   }
 });
 
-app.post('/atualizar', async (req, res) => {
+app.post('/api/atualizar', async (req, res) => {
   try {
     const { processosAtualizados } = req.body;
     await axios.put('https://js-one.vercel.app/processosAbertos/1', { processos: processosAtualizados });
@@ -65,8 +65,6 @@ app.post('/atualizar', async (req, res) => {
     res.status(500).send('Erro ao atualizar os dados na API');
   }
 });
-
-
 
 app.listen(port, () => {
   console.log(`Servidor rodando em http://localhost:${port}`);
